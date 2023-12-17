@@ -51,7 +51,7 @@ def revelar_casilla(fila, columna, botones, tablero):
                     and botones[nueva_fila][nueva_columna]['state'] == tk.NORMAL
                     and botones[nueva_fila][nueva_columna]['text'] != '🚩'
                 ):
-                    revelar_casilla(nueva_fila, nueva_columna)
+                    revelar_casilla(nueva_fila, nueva_columna, botones, tablero)
 
 
 
