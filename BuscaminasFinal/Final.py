@@ -69,19 +69,13 @@ def clic_boton(fila, columna, event):
                 desactivar_botones()
     elif event == '<Button-3>':  # Clic derecho
         if botones[fila][columna]['text'] == ' ' and contador_bandera < minas:
-            agregar_banderin(fila, columna)
+            botones[fila][columna].config(text='🚩', fg='red') #Agregar Banderin
             contador_bandera += 1
-            actualizar_contador()
         elif botones[fila][columna]['text'] == '🚩':
-            eliminar_banderin(fila, columna)
+            botones[fila][columna].config(text=' ', state=tk.NORMAL) #Eliminar Banderin
             contador_bandera -= 1
-            actualizar_contador()
 
-def agregar_banderin(fila, columna):
-    botones[fila][columna].config(text='🚩', fg='red')
-
-def eliminar_banderin(fila, columna):
-    botones[fila][columna].config(text=' ', state=tk.NORMAL)
+        contador.config(text=f"Contador: {contador_bandera}/{minas}")
 
 def revelar_casilla(fila, columna):
     if botones[fila][columna]['text'] == '🚩':
@@ -171,8 +165,6 @@ def PantallaConfig(Ventana):
 
     ventana_nueva1.mainloop()
 
-def actualizar_contador():
-    contador.config(text=f"Contador: {contador_bandera}/{minas}")
 
 def Tablero(Ventana2):
     global root, tablero, botones, contador,inicio_tiempo
