@@ -8,30 +8,36 @@ def setDificultadFacil():
     global minas
     global filas
     global columnas
+    global dificultad
     tamTablero = "270x270"
     minas = 10
     filas = 9
     columnas = 9
+    dificultad = 'Facil'
 
 def setDificultadMedio():
     global tamTablero
     global minas
     global filas
     global columnas
+    global dificultad
     tamTablero = "320x320"
     minas = 40
     filas = 16
     columnas = 16
+    dificultad = 'Media'
 
 def setDificultadDificil():
     global tamTablero
     global minas
     global filas
     global columnas
+    global dificultad
     tamTablero = "320x600"
     minas = 99
     filas = 30
     columnas = 16
+    dificultad = 'Dificil'
 #---------------------------- Fin de Seleccionar dificultad -------------------- 
 
 # DEL TABLERO Y LA JUGABILIDAD:
@@ -72,6 +78,7 @@ def contar_minas_alrededor(tablero, fila, columna):
 
 #Funciones click derecho e izquierdo (revelar casillas y agregar banderines)
 def clic_boton(fila, columna, event):
+    global contador_bandera
     if event == '<Button-1>':  # Clic izquierdo
         if tablero[fila][columna] == 'M':
             messagebox.showinfo("Fin del juego", "¡Has perdido!")
@@ -82,21 +89,29 @@ def clic_boton(fila, columna, event):
                 messagebox.showinfo("Fin del juego", "¡Has ganado!")
                 desactivar_botones()
     elif event == '<Button-3>':  # Clic derecho
-        if botones[fila][columna]['text'] == ' ':
+        if botones[fila][columna]['text'] == ' ' and contador_bandera < minas:
             agregar_banderin(fila, columna)
-        elif botones[fila][columna]['text'] == 'B':
+            contador_bandera += 1
+            actualizar_contador()
+        elif botones[fila][columna]['text'] == '🚩':
             eliminar_banderin(fila, columna)
+            contador_bandera -= 1
+            actualizar_contador()
 
 
 
 def agregar_banderin(fila, columna):
-    botones[fila][columna].config(text='B', fg='red', state=tk.DISABLED)
+    botones[fila][columna].config(text='🚩', fg='red')
 
 def eliminar_banderin(fila, columna):
     botones[fila][columna].config(text=' ', state=tk.NORMAL)
 
 
 def revelar_casilla(fila, columna):
+    if botones[fila][columna]['text'] == '🚩':
+        # Si hay una bandera en la casilla, no hagas nada
+        return
+
     if tablero[fila][columna] != ' ':
         botones[fila][columna].config(text=tablero[fila][columna], state=tk.DISABLED)
     else:
@@ -108,8 +123,10 @@ def revelar_casilla(fila, columna):
                     0 <= nueva_fila < filas
                     and 0 <= nueva_columna < columnas
                     and botones[nueva_fila][nueva_columna]['state'] == tk.NORMAL
+                    and botones[nueva_fila][nueva_columna]['text'] != '🚩'
                 ):
                     revelar_casilla(nueva_fila, nueva_columna)
+
 
 
 def verificar_victoria():
@@ -123,9 +140,16 @@ def verificar_victoria():
     return True
 
 def desactivar_botones():
+    global contador_bandera
     for fila in range(filas):
         for columna in range(columnas):
-            botones[fila][columna].config(state=tk.DISABLED)
+            if tablero[fila][columna] == 'M' and botones[fila][columna]['text'] != '🚩':
+                botones[fila][columna].config(state=tk.DISABLED, text='💣', bg='#C91E00')
+            else:
+                botones[fila][columna].config(state=tk.DISABLED)
+            botones[fila][columna].unbind('<Button-3>')
+
+
 
 def PantallaInicial(Ventana):
     # Titulo
@@ -168,8 +192,11 @@ def PantallaConfig(Ventana):
 
     ventana_nueva1.mainloop()
 
+def actualizar_contador():
+    contador.config(text=f"Contador: {contador_bandera}/{minas}")
+
 def Tablero(Ventana2):
-    global root, tablero, botones
+    global root, tablero, botones, contador
     Ventana2.destroy()
     root = tk.Tk()
     root.title("Buscaminas")
@@ -181,11 +208,14 @@ def Tablero(Ventana2):
     frame2.pack(expand=True, fill="both")
 
     # Frame1
-    contador = tk.Label(frame1, text="Contador: 0", font=("Helvetica", 12))
+    contador = tk.Label(frame1, text=f"Contador: {0}/{minas}", font=("Helvetica", 12))
     contador.pack(side="left")
 
-    Temporizador = tk.Label(frame1, text="Contador: 0", font=("Helvetica", 12))
-    Temporizador.pack(side="right")
+    volver_boton = tk.Button(frame1, text="😊", command=lambda: PantallaConfig(root), font=("Helvetica", 12), width=1, height=1, bg="yellow")
+    volver_boton.pack(side="left", anchor="n", fill="y")
+
+    Temporizador = tk.Label(frame1, text="Tiempo: ", font=("Helvetica", 12))
+    Temporizador.pack(side="left")
 
     # Frame2 (del tablero de juego)
     tablero = inicializar_tablero(filas, columnas, minas)
@@ -199,6 +229,9 @@ def Tablero(Ventana2):
 
     root.mainloop()
 
+
+contador_bandera = 0
 Ventana = tk.Tk() # Crear ventana principal
 PantallaInicial(Ventana) # Pantalla Inicial
 Ventana.mainloop() # Mostrar Ventana
+
