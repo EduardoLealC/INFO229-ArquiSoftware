@@ -1,6 +1,6 @@
 # Proyecto: Juego de buscaminas
 
-Este proyecto busca diseñar e implementar una versión de la arquitectura de software del conocido juego Buscaminas. Esto mediante el uso de la metodología 4+1 y utilizando el lenguaje de progrmación Python
+En este proyecto se busca diseñar e implementar nuestra propia versión del videojuego "Buscaminas" utilizando el lenguaje de programación “Python”, además se tiene que hacer uso de la metodología 4+1, patrones de diseño y otras buenas prácticas para mejorar la calidad de este mismo.
 
 # Integrantes:
 - Eduardo Leal
